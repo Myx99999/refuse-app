@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拒绝禁止 - 林琛的道歉</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .app-container {
+            width: 360px;
+            height: 640px;
+            background-color: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+        
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background-image: url('https://i.pravatar.cc/300');
+            background-size: cover;
+            margin-bottom: 10px;
+        }
+        
+        .message-container {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 0 30px;
+        }
+        
+        button {
+            padding: 15px 0;
+            border-radius: 50px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #accept {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #reject {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        .counter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255,255,255,0.3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* 人物对话场景样式 */
+        .characters-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .character {
+            width: 100px;
+            height: 150px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            position: relative;
+        }
+        
+        #boy-character {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/4140/4140048.png');
+            transform: translateX(-20px);
+            transition: transform 0.5s ease;
+        }
+        
+        #girl-character {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/4140/4140047.png');
+            transform: translateX(20px);
+            transition: transform 0.5s ease;
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            top: -60px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 10px;
+            max-width: 120px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #boy-speech {
+            left: 0;
+        }
+        
+        #girl-speech {
+            right: 0;
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-top-color: white;
+            border-bottom: 0;
+        }
+        
+        #boy-speech:after {
+            left: 20px;
+            margin-left: -10px;
+        }
+        
+        #girl-speech:after {
+            right: 20px;
+            margin-right: -10px;
+        }
+        
+        .time-capsule {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .map-container {
+            width: 80%;
+            height: 250px;
+            background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=14&size=400x250&key=YOUR_API_KEY');
+            background-size: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .heart-code {
+            width: 80%;
+            background-color: #282c34;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .heart-code pre {
+            color: #61dafb;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="counter">拒绝次数: <span id="reject-count">0</span>/99</div>
+            <div class="profile-pic"></div>
+            <h2>林琛的道歉</h2>
+        </div>
+        
+        <div class="message-container">
+            <p class="message" id="message">棠棠，对不起，我不该忘记我们的三周年纪念日。我知道一句对不起无法弥补，但请给我一次机会...</p>
+            
+            <div class="buttons">
+                <button id="accept">接受道歉</button>
+                <button id="reject">拒绝</button>
+            </div>
+        </div>
+        
+        <!-- 新增人物对话场景 -->
+        <div class="characters-container">
+            <div class="character" id="boy-character">
+                <div class="speech-bubble" id="boy-speech">对不起，我真的知道错了...</div>
+            </div>
+            <div class="character" id="girl-character">
+                <div class="speech-bubble" id="girl-speech">哼，你每次都这样说...</div>
+            </div>
+        </div>
+        
+        <div class="time-capsule" id="time-capsule">
+            <h3>时光胶囊</h3>
+            <div class="map-container"></div>
+            <p>初次相遇的地点</p>
+            <p>距离心动还有 0 米</p>
+            <div class="heart-code">
+                <pre>
+while True:
+    love += 1
+    print("我爱你，棠棠")
+                </pre>
+            </div>
+            <button id="close-capsule">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        let rejectCount = 0;
+        const maxRejects = 99;
+        const rejectCountDisplay = document.getElementById('reject-count');
+        const message = document.getElementById('message');
+        const acceptBtn = document.getElementById('accept');
+        const rejectBtn = document.getElementById('reject');
+        const timeCapsule = document.getElementById('time-capsule');
+        const closeCapsuleBtn = document.getElementById('close-capsule');
+        
+        // 人物对话元素
+        const boyCharacter = document.getElementById('boy-character');
+        const girlCharacter = document.getElementById('girl-character');
+        const boySpeech = document.getElementById('boy-speech');
+        const girlSpeech = document.getElementById('girl-speech');
+        
+        // 初始化显示男孩对话
+        setTimeout(() => {
+            boySpeech.style.opacity = 1;
+        }, 1000);
+        
+        // 拒绝消息库
+        const messages = [
+            "我真的很抱歉，我知道我错了...",
+            "给个机会吧，我保证不会再忘记重要的日子",
+            "我连夜写了这个程序，就是想告诉你我有多在乎你",
+            "我查了200多条代码，就为了让你看到这条消息",
+            "你知道吗？我花了200小时开发这个程序",
+            "我收集了我们所有的回忆，都在这个APP里",
+            "棠棠，你还记得我们第一次见面的地方吗？",
+            "我有一个惊喜要给你看，再给我一次机会好吗？",
+            "我知道你现在很生气，但请相信我的心意",
+            "如果你继续拒绝，会有更多惊喜等着你哦~"
+        ];
+        
+        // 女孩回应消息库
+        const girlResponses = [
+            "哼，你每次都这样说...",
+            "你知道我等了多久吗？",
+            "程序？就知道写程序...",
+            "200条代码有我重要吗？",
+            "200小时？那天你要是来了就不用这么麻烦了",
+            "我们的回忆你居然要用APP来记录？",
+            "当然记得，你迟到了半小时...",
+            "什么惊喜能比你准时赴约更让我惊喜？",
+            "你的心意是什么？加班的心意吗？",
+            "我才不好奇呢..."
+        ];
+        
+        // 接受道歉
+        acceptBtn.addEventListener('click', () => {
+            message.textContent = "谢谢你愿意原谅我！我保证以后把你放在第一位，比任何代码都重要！";
+            acceptBtn.classList.add('hidden');
+            rejectBtn.classList.add('hidden');
+            
+            // 更新对话气泡
+            boySpeech.textContent = "谢谢你原谅我！";
+            boySpeech.style.opacity = 1;
+            
+            setTimeout(() => {
+                girlSpeech.textContent = "下次不许再忘记了！";
+                girlSpeech.style.opacity = 1;
+                
+                // 角色靠近动画
+                boyCharacter.style.transform = "translateX(20px)";
+                girlCharacter.style.transform = "translateX(-20px)";
+            }, 1000);
+            
+            // 显示彩蛋
+            setTimeout(() => {
+                message.innerHTML = "你愿意让这个笨蛋继续debug人生吗？<br><br>❤️";
+                
+                // 最终对话
+                boySpeech.textContent = "我爱你，棠棠";
+                girlSpeech.textContent = "我也爱你，笨蛋程序员";
+            }, 3000);
+        });
+        
+        // 拒绝道歉
+        rejectBtn.addEventListener('click', () => {
+            rejectCount++;
+            rejectCountDisplay.textContent = rejectCount;
+            
+            // 更新消息
+            if (rejectCount < messages.length) {
+                message.textContent = messages[rejectCount - 1];
+                
+                // 更新对话气泡
+                boySpeech.textContent = messages[rejectCount - 1];
+                boySpeech.style.opacity = 1;
+                
+                setTimeout(() => {
+                    girlSpeech.textContent = girlResponses[rejectCount - 1];
+                    girlSpeech.style.opacity = 1;
+                }, 1000);
+            } else {
+                // 循环使用消息
+                const index = rejectCount % messages.length;
+                message.textContent = messages[index];
+                
+                // 更新对话气泡
+                boySpeech.textContent = messages[index];
+                boySpeech.style.opacity = 1;
+                
+                setTimeout(() => {
+                    girlSpeech.textContent = girlResponses[index];
+                    girlSpeech.style.opacity = 1;
+                }, 1000);
+            }
+            
+            // 根据拒绝次数触发不同效果
+            triggerEffect(rejectCount);
+            
+            // 移动拒绝按钮
+            moveRejectButton();
+            
+            // 达到最大拒绝次数
+            if (rejectCount >= maxRejects) {
+                message.textContent = "你这么固执的样子也好可爱...";
+                boySpeech.textContent = "你这么固执的样子也好可爱...";
+                boySpeech.style.opacity = 1;
+                
+                setTimeout(() => {
+                    girlSpeech.textContent = "...好吧，原谅你了";
+                    girlSpeech.style.opacity = 1;
+                    
+                    // 角色靠近动画
+                    boyCharacter.style.transform = "translateX(20px)";
+                    girlCharacter.style.transform = "translateX(-20px)";
+                }, 1000);
+                
+                setTimeout(() => {
+                    acceptBtn.click(); // 自动触发接受
+                }, 2000);
+            }
+        });
+        
+        // 关闭时光胶囊
+        closeCapsuleBtn.addEventListener('click', () => {
+            timeCapsule.style.opacity = 0;
+            setTimeout(() => {
+                timeCapsule.style.zIndex = -1;
+            }, 500);
+        });
+        
+        function triggerEffect(count) {
+            // 根据拒绝次数触发不同效果
+            switch(count) {
+                case 1:
+                    // 手机震动
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100, 50, 100]);
+                    }
+                    // 弹出表情包
+                    message.innerHTML += '<br><img src="https://i.imgur.com/JYMquss.jpg" width="150" alt="给个机会嘛">';
+                    break;
+                    
+                case 3:
+                    // 擦玻璃效果
+                    document.body.style.filter = 'blur(5px)';
+                    message.textContent = "擦掉我的错误吧";
+                    setTimeout(() => {
+                        document.body.style.filter = 'none';
+                    }, 3000);
+                    break;
+                    
+                case 5:
+                    // 假装开启前置摄像头
+                    message.innerHTML = "正在录制你的表情...<br><div style='width:200px;height:150px;background:#000;margin:10px auto;border-radius:10px;'></div>";
+                    break;
+                    
+                case 7:
+                    // 显示时光胶囊
+                    timeCapsule.style.zIndex = 10;
+                    timeCapsule.style.opacity = 1;
+                    break;
+                    
+                case 10:
+                    // 变色效果
+                    document.querySelector('.app-container').style.animation = 'colorChange 5s infinite';
+                    document.head.insertAdjacentHTML('beforeend', `
+                        <style>
+                            @keyframes colorChange {
+                                0% { background-color: white; }
+                                25% { background-color: #ffebee; }
+                                50% { background-color: #e3f2fd; }
+                                75% { background-color: #e8f5e9; }
+                                100% { background-color: white; }
+                            }
+                        </style>
+                    `);
+                    break;
+                    
+                case 15:
+                    // 显示开发日志
+                    message.innerHTML = "开发日志片段:<br><code>凌晨4:23 - 修复按钮动画<br>凌晨5:47 - 加入棠棠笑容识别<br>早上7:12 - 第18杯咖啡</code>";
+                    break;
+                    
+                case 20:
+                    // 下雪效果
+                    createSnowflakes();
+                    break;
+            }
+            
+            // 每5次改变一次按钮样式
+            if (count % 5 === 0) {
+                const randomColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                rejectBtn.style.backgroundColor = randomColor;
+                rejectBtn.style.transform = 'scale(0.95)';
+            }
+            
+            // 角色动画
+            if (count % 3 === 0) {
+                boyCharacter.style.transform = "translateX(-10px) translateY(-20px)";
+                setTimeout(() => {
+                    boyCharacter.style.transform = "translateX(-20px)";
+                }, 500);
+            }
+            
+            if (count % 4 === 0) {
+                girlCharacter.style.transform = "translateX(10px) translateY(-10px)";
+                setTimeout(() => {
+                    girlCharacter.style.transform = "translateX(20px)";
+                }, 500);
+            }
+        }
+        
+        function moveRejectButton() {
+            const randomX = Math.random() * 100 - 50;
+            const randomY = Math.random() * 50 - 25;
+            
+            rejectBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            
+            // 如果拒绝次数增加，按钮变小
+            if (rejectCount > 10) {
+                const scale = Math.max(0.7, 1 - (rejectCount * 0.01));
+                rejectBtn.style.transform += ` scale(${scale})`;
+            }
+        }
+        
+        function createSnowflakes() {
+            const container = document.querySelector('.app-container');
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < 50; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.innerHTML = '❄';
+                snowflake.style.position = 'absolute';
+                snowflake.style.color = 'white';
+                snowflake.style.userSelect = 'none';
+                snowflake.style.top = '-20px';
+                snowflake.style.left = `${Math.random() * 100}%`;
+                snowflake.style.fontSize = `${Math.random() * 10 + 10}px`;
+                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+                snowflake.style.animation = `fall ${Math.random() * 5 + 5}s linear infinite`;
+                snowflake.style.animationDelay = `${Math.random() * 5}s`;
+                
+                fragment.appendChild(snowflake);
+            }
+            
+            container.appendChild(fragment);
+            
+            document.head.insertAdjacentHTML('beforeend', `
+                <style>
+                    @keyframes fall {
+                        0% { transform: translateY(0) rotate(0deg); }
+                        100% { transform: translateY(640px) rotate(360deg); }
+                    }
+                </style>
+            `);
+        }
+    </script>
+</body>
+</html>
